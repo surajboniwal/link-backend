@@ -6,7 +6,13 @@ import (
 )
 
 type Controllers struct {
-	OrganisationController controllers.OrganisationController
+	organisationController controllers.OrganisationController
+}
+
+func NewControllers(organisationController controllers.OrganisationController) Controllers {
+	return Controllers{
+		organisationController: organisationController,
+	}
 }
 
 func SetupRouter(router *gin.Engine, controllers Controllers) {
@@ -17,6 +23,6 @@ func SetupRouter(router *gin.Engine, controllers Controllers) {
 		})
 	})
 
-	SetupOrganisationRouter(router, controllers.OrganisationController)
+	SetupOrganisationRouter(router, controllers.organisationController)
 
 }
