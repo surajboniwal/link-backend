@@ -21,11 +21,7 @@ func NewServer(db *mongo.Database) *Server {
 	router := gin.New()
 
 	controllers := routers.Controllers{
-		OrganisationController: controllers.OrganisationController{
-			OrganisationRepository: repositories.OrganisationRepositoryImpl{
-				DB: db,
-			},
-		},
+		OrganisationController: controllers.NewOrganisationController(repositories.NewOrganisationRepositoryImpl(db)),
 	}
 
 	routers.SetupRouter(router, controllers)

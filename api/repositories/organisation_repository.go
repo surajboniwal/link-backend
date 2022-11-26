@@ -15,11 +15,17 @@ type OrganisationRepository interface {
 }
 
 type OrganisationRepositoryImpl struct {
-	DB *mongo.Database
+	db *mongo.Database
+}
+
+func NewOrganisationRepositoryImpl(db *mongo.Database) OrganisationRepositoryImpl {
+	return OrganisationRepositoryImpl{
+		db: db,
+	}
 }
 
 func (repo OrganisationRepositoryImpl) CreateOrganisation(data *models.Organisation) {
-	repo.DB.Collection("organisations").InsertOne(context.Background(), data)
+	repo.db.Collection("organisations").InsertOne(context.Background(), data)
 }
 
 func (repo OrganisationRepositoryImpl) GetOrganisation() []models.Organisation {
@@ -27,7 +33,7 @@ func (repo OrganisationRepositoryImpl) GetOrganisation() []models.Organisation {
 
 	findOptions := options.Find()
 
-	cursor, err := repo.DB.Collection("organisations").Find(context.TODO(), bson.D{{}}, findOptions)
+	cursor, err := repo.db.Collection("organisations").Find(context.TODO(), bson.D{{}}, findOptions)
 
 	if err != nil {
 		panic(err)

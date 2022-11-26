@@ -7,7 +7,13 @@ import (
 )
 
 type OrganisationController struct {
-	OrganisationRepository repositories.OrganisationRepository
+	organisationRepository repositories.OrganisationRepository
+}
+
+func NewOrganisationController(repo repositories.OrganisationRepository) OrganisationController {
+	return OrganisationController{
+		organisationRepository: repo,
+	}
 }
 
 func (organisationController OrganisationController) CreateOrganisation(ctx *gin.Context) {
@@ -22,14 +28,14 @@ func (organisationController OrganisationController) CreateOrganisation(ctx *gin
 		Industry:    "Tech",
 	}
 
-	organisationController.OrganisationRepository.CreateOrganisation(&org)
+	organisationController.organisationRepository.CreateOrganisation(&org)
 
 	ctx.JSON(200, org)
 }
 
 func (organisationController OrganisationController) GetOrganisation(ctx *gin.Context) {
 
-	data := organisationController.OrganisationRepository.GetOrganisation()
+	data := organisationController.organisationRepository.GetOrganisation()
 
 	ctx.JSON(200, gin.H{
 		"status":  true,
