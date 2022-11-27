@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/surajboniwal/link-backend/api/repositories"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AuthController struct {
@@ -18,10 +19,24 @@ func NewAuthController(repo repositories.AuthRepository) AuthController {
 }
 
 func (authController AuthController) Register(context *gin.Context) {
+
+	var params RegisterParams
+
+	if err := context.BindJSON(&params); err != nil {
+		context.JSON(
+			http.StatusBadRequest, gin.H{
+				"status": false,
+				"error":  err.Error(),
+			},
+		)
+		return
+	}
+
 	context.JSON(
 		http.StatusCreated,
 		gin.H{
 			"status": true,
+			"data":   params,
 		},
 	)
 }
@@ -33,4 +48,22 @@ func (authController AuthController) Login(context *gin.Context) {
 			"status": true,
 		},
 	)
+}
+
+type RegisterParams struct {
+	FirstName        string             `json:"first_name" bson:"first_name" binding:"required"`
+	LastName         string             `json:"last_name" bson:"last_name" binding:"required"`
+	Email            string             `json:"email" bson:"email" binding:"required"`
+	OrganisationName string             `json:"organisation_name" bson:"organisation_name" binding:"required"`
+	Revenue          primitive.ObjectID `json:"revenue_option" binding:"required"`
+	Phone            RegisterParamPhone `json:"phone" binding:"required"`
+	Website          string             `json:"website" binding:"required"`
+	Location         string             `json:"location" binding:"required"`
+	Designation      string             `json:"designation" binding:"required"`
+	Industry         primitive.ObjectID `json:"industry_option" binding:"required"`
+}
+
+type RegisterParamPhone struct {
+	CountryCode string `json:"country_code" binding:"required"`
+	PhoneNumber string `json:"phone_number" binding:"required"`
 }
