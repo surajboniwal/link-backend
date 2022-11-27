@@ -8,15 +8,9 @@ import (
 )
 
 type Controllers struct {
-	organisationController controllers.OrganisationController
-	authController         controllers.AuthController
-}
-
-func NewControllers(organisationController controllers.OrganisationController, authController controllers.AuthController) Controllers {
-	return Controllers{
-		organisationController: organisationController,
-		authController:         authController,
-	}
+	OrganisationController controllers.OrganisationController
+	AuthController         controllers.AuthController
+	ConstantsController    controllers.ConstantsController
 }
 
 func SetupRouter(router *gin.Engine, controllers Controllers) {
@@ -27,7 +21,8 @@ func SetupRouter(router *gin.Engine, controllers Controllers) {
 		})
 	})
 
-	SetupOrganisationRouter(router, controllers.organisationController)
-	SetupAuthRouter(router, controllers.authController)
+	SetupOrganisationRouter(router, controllers.OrganisationController)
+	SetupAuthRouter(router, controllers.AuthController)
+	SetupConstantsRouter(router, controllers.ConstantsController)
 
 }
