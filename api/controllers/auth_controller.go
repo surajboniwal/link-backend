@@ -33,6 +33,7 @@ func (authController AuthController) Register(context *gin.Context) {
 		return
 	}
 
+	//Create an organisation
 	organisation := models.Organisation{
 		ID:          primitive.NewObjectID(),
 		Name:        params.OrganisationName,
@@ -44,17 +45,28 @@ func (authController AuthController) Register(context *gin.Context) {
 		Industry:    params.Industry,
 	}
 
-	//Create an organisation
 	_, err := authController.organisationRepository.CreateOrganisation(&organisation)
 
 	if err != nil {
-		helpers.ResponseDispatch(context, nil, err, http.StatusInternalServerError)
+		helpers.ResponseDispatch(context, nil, err, http.StatusBadRequest)
 		return
 	}
 
 	//Create an user
+	user := models.User{
+		ID:        primitive.NewObjectID(),
+		FirstName: params.FirstName,
+		LastName:  params.LastName,
+		Email:     params.Email,
+		Password:  params.Password,
+	}
 
-	// _, userError := authController.userRepository.CreateUser()
+	_, userError := authController.userRepository.CreateUser(&user)
+
+	if userError != nil {
+		helpers.ResponseDispatch(context, nil, err, http.StatusBadRequest)
+		return
+	}
 
 	//Create an member
 
@@ -74,6 +86,7 @@ type RegisterParams struct {
 	FirstName        string             `json:"first_name" bson:"first_name" binding:"required"`
 	LastName         string             `json:"last_name" bson:"last_name" binding:"required"`
 	Email            string             `json:"email" bson:"email" binding:"required"`
+	Password         string             `json:"password" bson:"password" binding:"required"`
 	OrganisationName string             `json:"organisation_name" bson:"organisation_name" binding:"required"`
 	Revenue          primitive.ObjectID `json:"revenue_option" binding:"required"`
 	Phone            models.Phone       `json:"phone" binding:"required"`
