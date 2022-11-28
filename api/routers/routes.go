@@ -11,6 +11,7 @@ type Controllers struct {
 	OrganisationController controllers.OrganisationController
 	AuthController         controllers.AuthController
 	ConstantsController    controllers.ConstantsController
+	UserController         controllers.UserController
 }
 
 func SetupRouter(router *gin.Engine, controllers Controllers) {
@@ -24,5 +25,6 @@ func SetupRouter(router *gin.Engine, controllers Controllers) {
 	SetupOrganisationRouter(router, controllers.OrganisationController)
 	SetupAuthRouter(router, controllers.AuthController)
 	SetupConstantsRouter(router, controllers.ConstantsController)
+	SetupUserRouter(router, controllers.UserController)
 
 }

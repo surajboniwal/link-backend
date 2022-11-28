@@ -18,16 +18,18 @@ type Server struct {
 func NewServer(db *mongo.Database) *Server {
 
 	server := &Server{db: db}
-	router := gin.New()
+	router := gin.Default()
 
 	organisationController := controllers.NewOrganisationController(repositories.NewOrganisationRepositoryImpl(db))
 	authController := controllers.NewAuthController(repositories.NewAuthRepositoryImpl(db), organisationController)
 	constantsController := controllers.NewConstantsController(repositories.NewConstantsRepositoryImpl(db))
+	userController := controllers.NewUserController(repositories.NewUserRepositoryImpl(db))
 
 	controllers := routers.Controllers{
 		OrganisationController: organisationController,
 		AuthController:         authController,
 		ConstantsController:    constantsController,
+		UserController:         userController,
 	}
 
 	routers.SetupRouter(router, controllers)
