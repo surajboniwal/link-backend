@@ -41,12 +41,14 @@ func setupDI(db *mongo.Database) routers.Controllers {
 	userController := controllers.NewUserController(userRepository)
 	authController := controllers.NewAuthController(authRepository, organisationRepository, userRepository)
 
-	return routers.Controllers{
+	controllers := routers.Controllers{
 		OrganisationController: organisationController,
 		AuthController:         authController,
 		ConstantsController:    constantsController,
 		UserController:         userController,
 	}
+
+	return controllers
 
 }
 
