@@ -13,4 +13,5 @@ func SetupOrganisationRouter(router *gin.Engine, organisationController controll
 	memberRouter := r.Group(":id/member")
 
 	memberRouter.POST("/", organisationController.CreateMember)
+	memberRouter.GET("/", organisationController.GetMember)
 }

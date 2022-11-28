@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -67,8 +66,6 @@ func (controller OrganisationController) CreateMember(context *gin.Context) {
 
 	orgIdObject, orgIdErr := primitive.ObjectIDFromHex(orgId)
 
-	fmt.Print(orgIdObject)
-
 	if orgIdErr != nil {
 		helpers.ResponseDispatch(context, nil, "Invalid ID", http.StatusBadRequest)
 		return
@@ -85,4 +82,24 @@ func (controller OrganisationController) CreateMember(context *gin.Context) {
 	}
 
 	helpers.ResponseDispatch(context, id, nil, http.StatusCreated)
+}
+
+func (controller OrganisationController) GetMember(context *gin.Context) {
+	orgId := context.Param("id")
+
+	orgIdObject, orgIdErr := primitive.ObjectIDFromHex(orgId)
+
+	if orgIdErr != nil {
+		helpers.ResponseDispatch(context, nil, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	result, err := controller.memberRepository.GetMembers(orgIdObject)
+
+	if err != nil {
+		helpers.ResponseDispatch(context, nil, err, http.StatusBadRequest)
+		return
+	}
+
+	helpers.ResponseDispatch(context, result, nil, http.StatusCreated)
 }
