@@ -19,7 +19,12 @@ func NewConstantsController(repo repositories.ConstantsRepository) ConstantsCont
 }
 
 func (constantsController ConstantsController) GetConstants(context *gin.Context) {
-	constants := constantsController.constantsRepository.GetConstants()
+	constants, err := constantsController.constantsRepository.GetConstants()
+
+	if err != nil {
+		helpers.ResponseDispatch(context, nil, err, http.StatusInternalServerError)
+		return
+	}
 
 	helpers.ResponseDispatch(context, constants, nil, http.StatusOK)
 }

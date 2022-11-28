@@ -19,26 +19,26 @@ func NewOrganisationController(repo repositories.OrganisationRepository) Organis
 	}
 }
 
-func (organisationController OrganisationController) CreateOrganisation(ctx *gin.Context) {
+func (organisationController OrganisationController) CreateOrganisation(org models.Organisation) (interface{}, error) {
 
-	org := models.Organisation{
-		Name:        "Hello",
-		Revenue:     "1000",
-		Phone:       "9974849404",
-		Website:     "https://surajboniwal.dev",
-		Location:    "India",
-		Designation: "Founder",
-		Industry:    "Tech",
+	id, err := organisationController.organisationRepository.CreateOrganisation(&org)
+
+	if err != nil {
+		return nil, err
 	}
 
-	organisationController.organisationRepository.CreateOrganisation(&org)
+	return id, nil
 
-	helpers.ResponseDispatch(ctx, org, nil, http.StatusOK)
 }
 
 func (organisationController OrganisationController) GetOrganisation(ctx *gin.Context) {
 
-	data := organisationController.organisationRepository.GetOrganisation()
+	data, err := organisationController.organisationRepository.GetOrganisation()
+
+	if err != nil {
+		helpers.ResponseDispatch(ctx, nil, err, http.StatusInternalServerError)
+		return
+	}
 
 	helpers.ResponseDispatch(ctx, data, nil, http.StatusOK)
 }

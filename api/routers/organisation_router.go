@@ -9,5 +9,4 @@ func SetupOrganisationRouter(router *gin.Engine, organisationController controll
 	r := router.Group("/organisation")
 
 	r.GET("/", organisationController.GetOrganisation)
-	r.POST("/", organisationController.CreateOrganisation)
 }
