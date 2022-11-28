@@ -12,13 +12,15 @@ import (
 
 type AuthController struct {
 	authRepository         repositories.AuthRepository
-	organisationController OrganisationController
+	organisationRepository repositories.OrganisationRepository
+	userRepository         repositories.UserRepository
 }
 
-func NewAuthController(repo repositories.AuthRepository, organisationController OrganisationController) AuthController {
+func NewAuthController(repo repositories.AuthRepository, organisationRepository repositories.OrganisationRepository, userRepository repositories.UserRepository) AuthController {
 	return AuthController{
 		authRepository:         repo,
-		organisationController: organisationController,
+		organisationRepository: organisationRepository,
+		userRepository:         userRepository,
 	}
 }
 
@@ -43,7 +45,7 @@ func (authController AuthController) Register(context *gin.Context) {
 	}
 
 	//Create an organisation
-	_, err := authController.organisationController.CreateOrganisation(organisation)
+	_, err := authController.organisationRepository.CreateOrganisation(&organisation)
 
 	if err != nil {
 		helpers.ResponseDispatch(context, nil, err, http.StatusInternalServerError)
@@ -51,6 +53,8 @@ func (authController AuthController) Register(context *gin.Context) {
 	}
 
 	//Create an user
+
+	// _, userError := authController.userRepository.CreateUser()
 
 	//Create an member
 

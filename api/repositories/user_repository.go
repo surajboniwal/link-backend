@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	CreateUser(models.User) (interface{}, error)
+	CreateUser(*models.User) (interface{}, error)
 }
 
 type UserRepositoryImpl struct {
@@ -22,7 +22,7 @@ func NewUserRepositoryImpl(db *mongo.Database) UserRepositoryImpl {
 	}
 }
 
-func (userRepository UserRepositoryImpl) CreateUser(user models.User) (interface{}, error) {
+func (userRepository UserRepositoryImpl) CreateUser(user *models.User) (interface{}, error) {
 	result, err := userRepository.db.Collection("users").InsertOne(context.Background(), user, options.InsertOne())
 
 	if err != nil {

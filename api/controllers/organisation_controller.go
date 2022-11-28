@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/surajboniwal/link-backend/api/helpers"
-	"github.com/surajboniwal/link-backend/api/models"
 	"github.com/surajboniwal/link-backend/api/repositories"
 )
 
@@ -17,18 +16,6 @@ func NewOrganisationController(repo repositories.OrganisationRepository) Organis
 	return OrganisationController{
 		organisationRepository: repo,
 	}
-}
-
-func (organisationController OrganisationController) CreateOrganisation(org models.Organisation) (interface{}, error) {
-
-	id, err := organisationController.organisationRepository.CreateOrganisation(&org)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return id, nil
-
 }
 
 func (organisationController OrganisationController) GetOrganisation(ctx *gin.Context) {

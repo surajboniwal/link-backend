@@ -20,23 +20,34 @@ func NewServer(db *mongo.Database) *Server {
 	server := &Server{db: db}
 	router := gin.Default()
 
-	organisationController := controllers.NewOrganisationController(repositories.NewOrganisationRepositoryImpl(db))
-	authController := controllers.NewAuthController(repositories.NewAuthRepositoryImpl(db), organisationController)
-	constantsController := controllers.NewConstantsController(repositories.NewConstantsRepositoryImpl(db))
-	userController := controllers.NewUserController(repositories.NewUserRepositoryImpl(db))
-
-	controllers := routers.Controllers{
-		OrganisationController: organisationController,
-		AuthController:         authController,
-		ConstantsController:    constantsController,
-		UserController:         userController,
-	}
+	controllers := setupDI(db)
 
 	routers.SetupRouter(router, controllers)
 
 	server.router = router
 
 	return server
+}
+
+func setupDI(db *mongo.Database) routers.Controllers {
+
+	constantsRepository := repositories.NewConstantsRepositoryImpl(db)
+	organisationRepository := repositories.NewOrganisationRepositoryImpl(db)
+	userRepository := repositories.NewUserRepositoryImpl(db)
+	authRepository := repositories.NewAuthRepositoryImpl(db)
+
+	constantsController := controllers.NewConstantsController(constantsRepository)
+	organisationController := controllers.NewOrganisationController(organisationRepository)
+	userController := controllers.NewUserController(userRepository)
+	authController := controllers.NewAuthController(authRepository, organisationRepository, userRepository)
+
+	return routers.Controllers{
+		OrganisationController: organisationController,
+		AuthController:         authController,
+		ConstantsController:    constantsController,
+		UserController:         userController,
+	}
+
 }
 
 func (server *Server) StartServer(port int) {
