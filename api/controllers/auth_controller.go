@@ -5,17 +5,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/surajboniwal/link-backend/api/helpers"
+	"github.com/surajboniwal/link-backend/api/models"
 	"github.com/surajboniwal/link-backend/api/repositories"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AuthController struct {
-	authRepository repositories.AuthRepository
+	authRepository         repositories.AuthRepository
+	organisationController OrganisationController
 }
 
-func NewAuthController(repo repositories.AuthRepository) AuthController {
+func NewAuthController(repo repositories.AuthRepository, organisationController OrganisationController) AuthController {
 	return AuthController{
-		authRepository: repo,
+		authRepository:         repo,
+		organisationController: organisationController,
 	}
 }
 
@@ -28,7 +31,30 @@ func (authController AuthController) Register(context *gin.Context) {
 		return
 	}
 
-	helpers.ResponseDispatch(context, params, nil, http.StatusBadRequest)
+	organisation := models.Organisation{
+		ID:          primitive.NewObjectID(),
+		Name:        params.OrganisationName,
+		Revenue:     params.Revenue,
+		Phone:       params.Phone,
+		Website:     params.Website,
+		Location:    params.Location,
+		Designation: params.Designation,
+		Industry:    params.Industry,
+	}
+
+	//Create an organisation
+	_, err := authController.organisationController.CreateOrganisation(organisation)
+
+	if err != nil {
+		helpers.ResponseDispatch(context, nil, err, http.StatusInternalServerError)
+		return
+	}
+
+	//Create an user
+
+	//Create an member
+
+	helpers.ResponseDispatch(context, params, nil, http.StatusOK)
 }
 
 func (authController AuthController) Login(context *gin.Context) {
@@ -46,14 +72,9 @@ type RegisterParams struct {
 	Email            string             `json:"email" bson:"email" binding:"required"`
 	OrganisationName string             `json:"organisation_name" bson:"organisation_name" binding:"required"`
 	Revenue          primitive.ObjectID `json:"revenue_option" binding:"required"`
-	Phone            RegisterParamPhone `json:"phone" binding:"required"`
+	Phone            models.Phone       `json:"phone" binding:"required"`
 	Website          string             `json:"website" binding:"required"`
 	Location         string             `json:"location" binding:"required"`
 	Designation      string             `json:"designation" binding:"required"`
 	Industry         primitive.ObjectID `json:"industry_option" binding:"required"`
-}
-
-type RegisterParamPhone struct {
-	CountryCode string `json:"country_code" binding:"required"`
-	PhoneNumber string `json:"phone_number" binding:"required"`
 }
