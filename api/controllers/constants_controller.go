@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/surajboniwal/link-backend/api/helpers"
 	"github.com/surajboniwal/link-backend/api/repositories"
 )
 
@@ -20,11 +21,5 @@ func NewConstantsController(repo repositories.ConstantsRepository) ConstantsCont
 func (constantsController ConstantsController) GetConstants(context *gin.Context) {
 	constants := constantsController.constantsRepository.GetConstants()
 
-	context.JSON(
-		http.StatusOK,
-		gin.H{
-			"status": true,
-			"data":   constants,
-		},
-	)
+	helpers.ResponseDispatch(context, constants, nil, http.StatusOK)
 }

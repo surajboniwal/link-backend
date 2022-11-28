@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/surajboniwal/link-backend/api/helpers"
 	"github.com/surajboniwal/link-backend/api/repositories"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -23,22 +24,11 @@ func (authController AuthController) Register(context *gin.Context) {
 	var params RegisterParams
 
 	if err := context.BindJSON(&params); err != nil {
-		context.JSON(
-			http.StatusBadRequest, gin.H{
-				"status": false,
-				"error":  err.Error(),
-			},
-		)
+		helpers.ResponseDispatch(context, nil, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	context.JSON(
-		http.StatusCreated,
-		gin.H{
-			"status": true,
-			"data":   params,
-		},
-	)
+	helpers.ResponseDispatch(context, params, nil, http.StatusBadRequest)
 }
 
 func (authController AuthController) Login(context *gin.Context) {

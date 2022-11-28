@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/surajboniwal/link-backend/api/helpers"
 	"github.com/surajboniwal/link-backend/api/models"
 	"github.com/surajboniwal/link-backend/api/repositories"
 )
@@ -30,15 +33,12 @@ func (organisationController OrganisationController) CreateOrganisation(ctx *gin
 
 	organisationController.organisationRepository.CreateOrganisation(&org)
 
-	ctx.JSON(200, org)
+	helpers.ResponseDispatch(ctx, org, nil, http.StatusOK)
 }
 
 func (organisationController OrganisationController) GetOrganisation(ctx *gin.Context) {
 
 	data := organisationController.organisationRepository.GetOrganisation()
 
-	ctx.JSON(200, gin.H{
-		"status":  true,
-		"message": data,
-	})
+	helpers.ResponseDispatch(ctx, data, nil, http.StatusOK)
 }
