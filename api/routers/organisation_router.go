@@ -9,4 +9,8 @@ func SetupOrganisationRouter(router *gin.Engine, organisationController controll
 	r := router.Group("/organisation")
 
 	r.GET("/:id", organisationController.GetSingleOrganisation)
+
+	memberRouter := r.Group(":id/member")
+
+	memberRouter.POST("/", organisationController.CreateMember)
 }
