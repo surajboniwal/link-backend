@@ -5,6 +5,7 @@ import (
 
 	"github.com/surajboniwal/link-backend/api/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -12,6 +13,7 @@ import (
 type OrganisationRepository interface {
 	CreateOrganisation(*models.Organisation) (interface{}, error)
 	GetOrganisation() ([]models.Organisation, error)
+	GetSingleOrganisation(id primitive.ObjectID) (models.Organisation, error)
 }
 
 type OrganisationRepositoryImpl struct {
@@ -52,4 +54,23 @@ func (repo OrganisationRepositoryImpl) GetOrganisation() ([]models.Organisation,
 	defer cursor.Close(context.Background())
 
 	return data, nil
+}
+
+func (repo OrganisationRepositoryImpl) GetSingleOrganisation(id primitive.ObjectID) (models.Organisation, error) {
+
+	filter := bson.D{{"_id", id}}
+
+	var data models.Organisation
+
+	err := repo.db.Collection("organisations").FindOne(
+		context.Background(),
+		filter,
+	).Decode(&data)
+
+	if err != nil {
+		return data, err
+	}
+
+	return data, nil
+
 }

@@ -18,7 +18,7 @@ type Server struct {
 func NewServer(db *mongo.Database) *Server {
 
 	server := &Server{db: db}
-	router := gin.Default()
+	router := gin.New()
 
 	controllers := setupDI(db)
 

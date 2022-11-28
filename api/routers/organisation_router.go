@@ -8,5 +8,5 @@ import (
 func SetupOrganisationRouter(router *gin.Engine, organisationController controllers.OrganisationController) {
 	r := router.Group("/organisation")
 
-	r.GET("/", organisationController.GetOrganisation)
+	r.GET("/:id", organisationController.GetSingleOrganisation)
 }
