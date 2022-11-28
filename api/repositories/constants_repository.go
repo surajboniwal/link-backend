@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"log"
 
 	"github.com/surajboniwal/link-backend/api/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,7 +10,7 @@ import (
 )
 
 type ConstantsRepository interface {
-	GetConstants() Constants
+	GetConstants() (Constants, error)
 }
 
 type ConstantsRepositoryImpl struct {
@@ -24,20 +23,24 @@ func NewConstantsRepositoryImpl(db *mongo.Database) ConstantsRepositoryImpl {
 	}
 }
 
-func (constantsRepository ConstantsRepositoryImpl) GetConstants() Constants {
+func (constantsRepository ConstantsRepositoryImpl) GetConstants() (Constants, error) {
 	var constants Constants
 
 	industryCursor, err := constantsRepository.db.Collection("industry_options").Find(context.Background(), bson.M{}, options.Find())
 	revenueCursor, err2 := constantsRepository.db.Collection("revenue_options").Find(context.Background(), bson.M{}, options.Find())
 
-	if err != nil || err2 != nil {
-		log.Fatal("Unable to fetch industries")
+	if err != nil {
+		return constants, err
+	}
+
+	if err2 != nil {
+		return constants, err2
 	}
 
 	industryCursor.All(context.TODO(), &constants.IndustryOptions)
 	revenueCursor.All(context.TODO(), &constants.RevenueOptions)
 
-	return constants
+	return constants, nil
 }
 
 type Constants struct {
